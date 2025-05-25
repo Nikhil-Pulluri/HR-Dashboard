@@ -26,10 +26,9 @@ const UserCard: FC<Props> = ({ user }) => {
 
   const rating = useMemo(() => Math.floor(Math.random() * 5) + 1, [])
 
-  // Generate fallback image based on id and gender
   const imageUrl = useMemo(() => {
     const genderPath = user.gender === 'female' ? 'women' : 'men'
-    const imageId = user.id % 100 // limit to 0–99 to stay within range
+    const imageId = user.id % 100
     return `https://randomuser.me/api/portraits/${genderPath}/${imageId}.jpg`
   }, [user.gender, user.id])
 
