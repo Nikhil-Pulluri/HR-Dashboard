@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { signIn } from 'next-auth/react'
+// import { signIn } from 'next-auth/react'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
@@ -12,8 +12,11 @@ export default function Landing() {
     // await signIn('google')
     setTimeout(() => {
       setLogin(true)
-      router.push('/dashboard')
     }, 2000)
+  }
+
+  if (login) {
+    router.push('/dashboard')
   }
 
   return (

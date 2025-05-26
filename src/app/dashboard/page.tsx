@@ -1,13 +1,84 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import UserCard, { User } from '@/components/card'
+import UserCard from '@/components/card'
 import SkeletonCard from '@/components/skeletonCard'
 import Select from 'react-select'
 import { useBookmarks } from '@/context/useBookmarks'
 import { usePromotions } from '@/context/usePromotions'
 
 type Option = { label: string; value: string }
+
+export type User = {
+  id: number
+  firstName: string
+  lastName: string
+  maidenName: string
+  age: number
+  gender: 'male' | 'female'
+  email: string
+  phone: string
+  username: string
+  password: string
+  birthDate: string
+  image: string
+  bloodGroup: string
+  height: number
+  weight: number
+  eyeColor: string
+  hair: {
+    color: string
+    type: string
+  }
+  ip: string
+  address: {
+    address: string
+    city: string
+    state: string
+    stateCode: string
+    postalCode: string
+    coordinates: {
+      lat: number
+      lng: number
+    }
+    country: string
+  }
+  macAddress: string
+  university: string
+  bank: {
+    cardExpire: string
+    cardNumber: string
+    cardType: string
+    currency: string
+    iban: string
+  }
+  company: {
+    department: string
+    name: string
+    title: string
+    address: {
+      address: string
+      city: string
+      state: string
+      stateCode: string
+      postalCode: string
+      coordinates: {
+        lat: number
+        lng: number
+      }
+      country: string
+    }
+  }
+  ein: string
+  ssn: string
+  userAgent: string
+  crypto: {
+    coin: string
+    wallet: string
+    network: string
+  }
+  role: string
+}
 
 export default function Dashboard() {
   const [users, setUsers] = useState<User[]>([])
@@ -59,7 +130,7 @@ export default function Dashboard() {
 
       const matchesDepartment = selectedDepartments.length === 0 || selectedDepartments.some((opt) => opt.value === user.company.department)
 
-      const userRating = (user as any).rating || (user.id % 5) + 1
+      const userRating = (user.id % 5) + 1
       const matchesRating = selectedRatings.length === 0 || selectedRatings.some((opt) => Number(opt.value) === userRating)
 
       return matchesQuery && matchesDepartment && matchesRating
