@@ -1,9 +1,11 @@
 'use client'
 import React, { useState } from 'react'
 import { Sidebar, SidebarBody, SidebarLink } from '@/components/ui/sidebar'
-import { IconArrowLeft, IconBrandTabler, IconSettings, IconUserBolt } from '@tabler/icons-react'
+import { IconArrowLeft, IconBrandTabler, IconBookmark, IconFileAnalytics } from '@tabler/icons-react'
 import { motion } from 'motion/react'
 import { cn } from '@/lib/utils'
+import { signOut } from 'next-auth/react'
+// import { SidebarLink } from '@/components/ui/sidebarLink'
 
 export default function DashboardLayout({
   children,
@@ -21,19 +23,23 @@ export default function DashboardLayout({
     {
       label: 'Bookmarks',
       href: '/dashboard/bookmarks/',
-      icon: <IconSettings className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />,
+      icon: <IconBookmark className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />,
     },
     {
       label: 'Analytics',
       href: '/dashboard/analytics/',
-      icon: <IconUserBolt className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />,
+      icon: <IconFileAnalytics className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />,
     },
     {
       label: 'Logout',
-      href: '#',
       icon: <IconArrowLeft className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />,
+      onClick: () => signOut({ callbackUrl: '/' }),
     },
   ]
+
+  const handleLogout = async () => {
+    await signOut()
+  }
 
   return (
     <div className={cn('flex w-full flex-1 flex-col overflow-hidden rounded-md border border-neutral-200 bg-gray-100 md:flex-row dark:border-neutral-700 dark:bg-neutral-800', 'h-screen')}>
@@ -48,13 +54,13 @@ export default function DashboardLayout({
             </div>
           </div>
           <div>
-            <SidebarLink
+            {/* <SidebarLink
               link={{
                 label: 'Nikhil Pulluri',
-                href: '#',
+                href: '',
                 icon: <img src="https://assets.aceternity.com/manu.png" className="h-7 w-7 shrink-0 rounded-full" width={50} height={50} alt="Avatar" />,
               }}
-            />
+            /> */}
           </div>
         </SidebarBody>
       </Sidebar>
