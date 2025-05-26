@@ -1,8 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, PointElement, ArcElement, RadialLinearScale, Title, Tooltip, Legend } from 'chart.js'
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, PointElement, ArcElement, RadialLinearScale, Title, Tooltip, Legend, ChartOptions } from 'chart.js'
 import { Bar, Line, Pie, Radar } from 'react-chartjs-2'
+import { ChartType } from 'chart.js'
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, ArcElement, RadialLinearScale, Title, Tooltip, Legend)
 
@@ -27,7 +28,6 @@ export default function AnalyticsPage() {
     fetchUsers()
   }, [])
 
-  // 📊 Department-wise average ratings
   const departmentRatings: { [key: string]: number[] } = {}
   users.forEach((user) => {
     const department = user.company.department
@@ -44,7 +44,6 @@ export default function AnalyticsPage() {
     return parseFloat((ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(2))
   })
 
-  // Chart Configs
   const barData = {
     labels: departmentLabels,
     datasets: [
@@ -101,38 +100,60 @@ export default function AnalyticsPage() {
     ],
   }
 
-  const commonOptions = (title: string) => ({
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { position: 'top' },
-      title: {
-        display: true,
-        text: title,
-        font: { size: 18 },
+  function commonOptions<T extends ChartType>(title: string): ChartOptions<T> {
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: 'white',
+          },
+        },
+        title: {
+          display: true,
+          text: title,
+          font: {
+            size: 18,
+          },
+          color: 'white',
+        },
+        scales: {
+          x: {
+            ticks: {
+              color: '#1E90FF',
+            },
+          },
+          y: {
+            ticks: {
+              color: 'white',
+            },
+          },
+        },
       },
-    },
-  })
+    } as ChartOptions<T>
+  }
 
   return (
     <div className="p-8 bg-gray-100 h-screen w-full overflow-auto dark:bg-neutral-800">
-      <h1 className="text-4xl font-bold text-center mb-12 text-gray-800 dark:text-gray-100">📊 Analytics Dashboard</h1>
+      <h1 className="text-4xl font-bold ml-4 mb-12 text-gray-800 dark:text-gray-100">Analytics Dashboard</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 dark:text-white">
         <div className="bg-white dark:bg-neutral-800 p-6 rounded-xl shadow-lg h-[400px]">
-          <Bar data={barData} title={'Department-wise Average Ratings'} />
+          <Bar data={barData} options={commonOptions('Department-wise Average Ratings')} />
+        </div>
+
+        <div className="bg-white dark:bg-neutral-800  p-6 rounded-xl shadow-lg h-[400px]">
+          <Line data={lineData} options={commonOptions('Weekly Bookmark Trends')} />
         </div>
 
         <div className="bg-white dark:bg-neutral-800 p-6 rounded-xl shadow-lg h-[400px]">
-          <Line data={lineData} title="Weekly Bookmark Trends (Mocked)" />
+          <Pie data={pieData} options={commonOptions('User Engagement Distribution')} />
         </div>
 
         <div className="bg-white dark:bg-neutral-800 p-6 rounded-xl shadow-lg h-[400px]">
-          <Pie data={pieData} title="User Engagement Distribution" />
-        </div>
-
-        <div className="bg-white dark:bg-neutral-800 p-6 rounded-xl shadow-lg h-[400px]">
-          <Radar data={radarData} title="Employee Performance Comparison" />
+          <Radar data={radarData} options={commonOptions('Employee Performance Comparison')} />
         </div>
       </div>
     </div>
