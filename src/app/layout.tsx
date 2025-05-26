@@ -1,6 +1,7 @@
 'use client'
 // import type { Metadata } from 'next'
-import { SessionProvider } from 'next-auth/react'
+// import { SessionProvider } from 'next-auth/react'
+import AuthProvider from '@/components/providers/session-provider'
 import { JetBrains_Mono } from 'next/font/google'
 import '@radix-ui/themes/styles.css'
 import { Theme } from '@radix-ui/themes'
@@ -28,13 +29,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${jetBrainsMono.className} dark antialiased`}>
-        <SessionProvider>
-          <BookmarkProvider>
-            <PromotionProvider>
-              <Theme>{children}</Theme>
-            </PromotionProvider>
-          </BookmarkProvider>
-        </SessionProvider>
+        <BookmarkProvider>
+          <PromotionProvider>
+            <Theme>
+              <AuthProvider>{children}</AuthProvider>
+            </Theme>
+          </PromotionProvider>
+        </BookmarkProvider>
       </body>
     </html>
   )
