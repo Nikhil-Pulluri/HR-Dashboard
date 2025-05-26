@@ -1,7 +1,7 @@
 'use client'
 
 import { FC, useMemo } from 'react'
-import Image from 'next/image'
+// import Image from 'next/image'
 import { FaStar, FaBookmark, FaEye, FaArrowUp } from 'react-icons/fa'
 import { useRouter } from 'next/navigation'
 import { useBookmarks } from '@/context/useBookmarks'
