@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import UserCard, { User } from '@/components/card'
 import SkeletonCard from '@/components/skeletonCard'
 import Select from 'react-select'
+import { useBookmarks } from '@/context/useBookmarks'
+// import { useRouter } from 'next/navigation'
 
 type Option = { label: string; value: string }
 
@@ -14,6 +16,10 @@ export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedDepartments, setSelectedDepartments] = useState<Option[]>([])
   const [selectedRatings, setSelectedRatings] = useState<Option[]>([])
+  // const [bookmarkedUserIds, setBookmarkedUserIds] = useState<number[]>([])
+  const { bookmarksLoaded } = useBookmarks()
+
+  // const router = useRouter()
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -42,6 +48,11 @@ export default function Dashboard() {
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value)
   }
+
+  // const toggleBookmark = (userId: number) => {
+  //   setBookmarkedUserIds((prev) => (prev.includes(userId) ? prev.filter((id) => id !== userId) : [...prev, userId]))
+  //   console.log('Bookmarked user IDs:', bookmarkedUserIds)
+  // }
 
   useEffect(() => {
     const filtered = users.filter((user) => {
@@ -91,16 +102,14 @@ export default function Dashboard() {
         />
       </div>
 
-      {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {[...Array(8)].map((_, index) => (
-            <SkeletonCard key={index} />
-          ))}
-        </div>
+      {bookmarksLoaded && loading ? (
+        <SkeletonCard />
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredUsers.map((user) => (
-            <UserCard key={user.id} user={user} />
+            <div key={user.id}>
+              <UserCard key={user.id} user={user} />
+            </div>
           ))}
         </div>
       )}

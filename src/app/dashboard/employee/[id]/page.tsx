@@ -1,13 +1,97 @@
 'use client'
-import React, { useEffect, useState } from 'react'
-import { User, MapPin, Building2, CreditCard, Coins, GraduationCap, Shield, Phone, Mail, Calendar, Eye, Palette, Ruler, Weight, ArrowLeft } from 'lucide-react'
+import React, { useEffect, useState, useMemo } from 'react'
+import { ArrowLeft, Copy, Check } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
+import { FaStar } from 'react-icons/fa'
 
 const UserProfile = () => {
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
-  const id = useParams().id
+  const [copiedPhone, setCopiedPhone] = useState(false)
+  const params = useParams()
+  const id = params.id
   const router = useRouter()
+
+  const rating = useMemo(() => Math.floor(Math.random() * 5) + 1, [])
+
+  const getCountryFlag = (countryName: string) => {
+    const countryToCode: { [key: string]: string } = {
+      'United States': 'us',
+      Canada: 'ca',
+      'United Kingdom': 'gb',
+      Germany: 'de',
+      France: 'fr',
+      Italy: 'it',
+      Spain: 'es',
+      Netherlands: 'nl',
+      Belgium: 'be',
+      Switzerland: 'ch',
+      Austria: 'at',
+      Poland: 'pl',
+      Sweden: 'se',
+      Norway: 'no',
+      Denmark: 'dk',
+      Finland: 'fi',
+      Australia: 'au',
+      'New Zealand': 'nz',
+      Japan: 'jp',
+      'South Korea': 'kr',
+      China: 'cn',
+      India: 'in',
+      Brazil: 'br',
+      Mexico: 'mx',
+      Argentina: 'ar',
+      Chile: 'cl',
+      'South Africa': 'za',
+      Russia: 'ru',
+      Turkey: 'tr',
+      Egypt: 'eg',
+      Nigeria: 'ng',
+      Kenya: 'ke',
+      Morocco: 'ma',
+      Israel: 'il',
+      'Saudi Arabia': 'sa',
+      UAE: 'ae',
+      Thailand: 'th',
+      Singapore: 'sg',
+      Malaysia: 'my',
+      Indonesia: 'id',
+      Philippines: 'ph',
+      Vietnam: 'vn',
+      Portugal: 'pt',
+      Greece: 'gr',
+      'Czech Republic': 'cz',
+      Hungary: 'hu',
+      Romania: 'ro',
+      Bulgaria: 'bg',
+      Croatia: 'hr',
+      Slovenia: 'si',
+      Slovakia: 'sk',
+      Estonia: 'ee',
+      Latvia: 'lv',
+      Lithuania: 'lt',
+      Ireland: 'ie',
+      Iceland: 'is',
+      Luxembourg: 'lu',
+      Malta: 'mt',
+      Cyprus: 'cy',
+    }
+
+    const countryCode = countryToCode[countryName] || 'xx'
+    return `https://flagcdn.com/24x18/${countryCode}.png`
+  }
+
+  const copyPhoneNumber = async () => {
+    if (!user?.phone) return
+
+    try {
+      await navigator.clipboard.writeText(user.phone)
+      setCopiedPhone(true)
+      setTimeout(() => setCopiedPhone(false), 2000)
+    } catch (err) {
+      console.error('Failed to copy phone number:', err)
+    }
+  }
 
   useEffect(() => {
     if (!id) return
@@ -18,7 +102,8 @@ const UserProfile = () => {
         const data = await response.json()
 
         const gender = data.gender === 'female' ? 'women' : 'men'
-        const imageUrl = `https://randomuser.me/api/portraits/${gender}/${data.id}.jpg`
+        const imageId = data.id % 100
+        const imageUrl = `https://randomuser.me/api/portraits/${gender}/${imageId}.jpg`
 
         setUser({ ...data, image: imageUrl })
         setLoading(false)
@@ -33,10 +118,18 @@ const UserProfile = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-500 mx-auto mb-4"></div>
-          <p className="text-xl text-gray-300">Loading user details...</p>
+      <div className="flex flex-1">
+        <div className="flex h-full w-full flex-1 flex-col gap-2 rounded-tl-2xl border border-neutral-200 bg-white p-2 md:p-10 dark:border-neutral-700 dark:bg-neutral-900">
+          <div className="flex gap-2">
+            {[...new Array(4)].map((i, idx) => (
+              <div key={'first-array-demo-1' + idx} className="h-20 w-full animate-pulse rounded-lg bg-gray-100 dark:bg-neutral-800"></div>
+            ))}
+          </div>
+          <div className="flex flex-1 gap-2">
+            {[...new Array(2)].map((i, idx) => (
+              <div key={'second-array-demo-1' + idx} className="h-full w-full animate-pulse rounded-lg bg-gray-100 dark:bg-neutral-800"></div>
+            ))}
+          </div>
         </div>
       </div>
     )
@@ -44,49 +137,59 @@ const UserProfile = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-900 dark:bg-neutral-800 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-neutral-800 flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4">😔</div>
-          <p className="text-xl text-gray-300">User not found.</p>
+          <p className="text-xl text-gray-600 dark:text-gray-300">User not found.</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen w-full overflow-auto bg-neutral-800">
-      <div className="bg-gray-800 border-b border-gray-700 dark:bg-neutral-800">
+    <div className="min-h-screen bg-gray-50 overflow-auto w-full dark:bg-neutral-800">
+      <div className="bg-white dark:bg-neutral-800">
         <div className="max-w-7xl mx-auto px-6 py-4">
-          <button
-            onClick={() => router.push('/dashboard')}
-            className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg border border-gray-600 hover:border-gray-500"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Back to Dashboard</span>
+          <button onClick={() => router.push('/dashboard')} className="flex items-center gap-2 text-gray-600 dark:text-gray-300  transition-colors dark:bg-neutral-800  px-4 py-2 rounded-lg border ">
+            <ArrowLeft className="w-9 h-4" />
+            <span>Dashboard</span>
           </button>
         </div>
       </div>
-      {/* Hero Section */}
-      <div className="border-b dark:bg-neutral-800 border-gray-700">
+
+      <div className="bg-white dark:bg-neutral-800 border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-6 py-16">
           <div className="flex flex-col lg:flex-row items-center gap-8">
             <div className="relative">
-              <img src={user.image} alt="User photo" className="w-40 h-40 rounded-full border-4 border-indigo-500 shadow-2xl object-cover" />
-              <div className="absolute -bottom-2 -right-2 bg-green-500 w-8 h-8 rounded-full border-4 border-gray-800"></div>
+              <img src={user.image} alt="User photo" className="w-40 h-40 shadow-lg object-cover" />
+              {/* <div className="absolute -bottom-2 -right-2 bg-green-500 w-8 h-8 rounded-full border-4 border-white dark:border-neutral-800"></div> */}
             </div>
             <div className="text-center lg:text-left">
-              <h1 className="text-5xl font-bold mb-2 text-white">
-                {user.firstName} {user.lastName}
-              </h1>
-              <p className="text-xl text-gray-300 mb-4">{user.company?.title || 'Professional'}</p>
+              <div className="flex items-center gap-3 justify-center lg:justify-start mb-2">
+                <h1 className="text-5xl font-bold text-gray-800 dark:text-gray-100">
+                  {user.firstName} {user.lastName}
+                </h1>
+                <img src={getCountryFlag(user.address?.country)} alt={`${user.address?.country} flag`} className="w-8 h-6 rounded-sm shadow-sm border border-gray-200 dark:border-gray-600" />
+              </div>
+              <p className="text-xl text-gray-600 dark:text-gray-300 mb-4">{user.company?.title || 'Professional'}</p>
+
+              <div className="flex items-center gap-1 justify-center lg:justify-start mb-4">
+                {[...Array(5)].map((_, i) => (
+                  <FaStar key={i} className={`h-4 w-4 ${i < rating ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600'}`} />
+                ))}
+              </div>
+
               <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
-                <div className="flex items-center gap-2 bg-gray-700/70 px-4 py-2 rounded-full border border-gray-600">
-                  <Mail className="w-4 h-4 text-indigo-400" />
-                  <span className="text-sm text-gray-200">{user.email}</span>
+                <div className="flex items-center gap-2 bg-gray-100 dark:bg-neutral-700 px-4 py-2 rounded-full border border-gray-200 dark:border-gray-600">
+                  {/* <img src={getCountryFlag(user.address?.country)} alt={`${user.address?.country} flag`} className="w-5 h-4 rounded-sm shadow-sm border border-gray-200 dark:border-gray-500" /> */}
+                  <span className="text-sm text-gray-700 dark:text-gray-200">{user.email}</span>
                 </div>
-                <div className="flex items-center gap-2 bg-gray-700/70 px-4 py-2 rounded-full border border-gray-600">
-                  <Phone className="w-4 h-4 text-indigo-400" />
-                  <span className="text-sm text-gray-200">{user.phone}</span>
+                <div className="flex items-center gap-2 bg-gray-100 dark:bg-neutral-700 px-4 py-2 rounded-full border border-gray-200 dark:border-gray-600">
+                  {/* <img src={getCountryFlag(user.address?.country)} alt={`${user.address?.country} flag`} className="w-5 h-4 rounded-sm shadow-sm border border-gray-200 dark:border-gray-500" /> */}
+                  <span className="text-sm text-gray-700 dark:text-gray-200">{user.phone}</span>
+                  <button onClick={copyPhoneNumber} className="ml-2 p-1 rounded-full hover:bg-gray-200 dark:hover:bg-neutral-600 transition-colors" title="Copy phone number">
+                    {copiedPhone ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4 text-gray-500 dark:text-gray-400" />}
+                  </button>
                 </div>
               </div>
             </div>
@@ -94,25 +197,22 @@ const UserProfile = () => {
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Personal Information */}
-          <SectionBox title="Personal Information" icon={<User className="w-6 h-6" />} accentColor="indigo">
+          <SectionBox title="Personal Information">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <InfoCard icon={<Calendar className="w-5 h-5 text-blue-400" />} label="Age" value={`${user.age} years`} />
-              <InfoCard icon={<User className="w-5 h-5 text-purple-400" />} label="Gender" value={user.gender} />
-              <InfoCard icon={<Calendar className="w-5 h-5 text-green-400" />} label="Birth Date" value={user.birthDate} />
-              <InfoCard icon={<Shield className="w-5 h-5 text-red-400" />} label="Blood Group" value={user.bloodGroup} />
-              <InfoCard icon={<Ruler className="w-5 h-5 text-indigo-400" />} label="Height" value={`${user.height} cm`} />
-              <InfoCard icon={<Weight className="w-5 h-5 text-orange-400" />} label="Weight" value={`${user.weight} kg`} />
-              <InfoCard icon={<Eye className="w-5 h-5 text-cyan-400" />} label="Eye Color" value={user.eyeColor} />
-              <InfoCard icon={<Palette className="w-5 h-5 text-pink-400" />} label="Hair" value={`${user.hair?.color} ${user.hair?.type}`} />
+              <InfoCard label="Age" value={`${user.age} years`} />
+              <InfoCard label="Gender" value={user.gender} />
+              <InfoCard label="Birth Date" value={user.birthDate} />
+              <InfoCard label="Blood Group" value={user.bloodGroup} />
+              <InfoCard label="Height" value={`${user.height} cm`} />
+              <InfoCard label="Weight" value={`${user.weight} kg`} />
+              <InfoCard label="Eye Color" value={user.eyeColor} />
+              <InfoCard label="Hair" value={`${user.hair?.color} ${user.hair?.type}`} />
             </div>
           </SectionBox>
 
-          {/* Address Information */}
-          <SectionBox title="Address Information" icon={<MapPin className="w-6 h-6" />} accentColor="green">
+          <SectionBox title="Address Information">
             <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <InfoCard label="Street" value={user.address?.address} />
@@ -121,10 +221,9 @@ const UserProfile = () => {
                 <InfoCard label="Country" value={user.address?.country} />
                 <InfoCard label="Postal Code" value={user.address?.postalCode} />
               </div>
-              <div className="bg-gray-800 rounded-lg p-6 border border-gray-700 mt-4">
-                <div className="text-center text-gray-400">
-                  <MapPin className="w-8 h-8 mx-auto mb-2 text-green-400" />
-                  <p className="text-sm">Coordinates</p>
+              <div className="bg-gray-50 dark:bg-neutral-700 rounded-lg p-6 border border-gray-200 dark:border-gray-600 mt-4">
+                <div className="text-center text-gray-600 dark:text-gray-300">
+                  <p className="text-sm font-semibold mb-2">Coordinates</p>
                   <p className="text-xs">Lat: {user.address?.coordinates?.lat}</p>
                   <p className="text-xs">Lng: {user.address?.coordinates?.lng}</p>
                 </div>
@@ -132,16 +231,15 @@ const UserProfile = () => {
             </div>
           </SectionBox>
 
-          {/* Company Information */}
-          <SectionBox title="Company Information" icon={<Building2 className="w-6 h-6" />} accentColor="purple">
+          <SectionBox title="Company Information">
             <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <InfoCard label="Company" value={user.company?.name} />
                 <InfoCard label="Department" value={user.company?.department} />
                 <InfoCard label="Title" value={user.company?.title} />
               </div>
-              <div className="border-t border-gray-700 pt-4">
-                <h4 className="text-sm font-semibold text-gray-400 mb-3">Office Address</h4>
+              <div className="border-t border-gray-200 dark:border-gray-600 pt-4">
+                <h4 className="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-3">Office Address</h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <InfoCard label="Address" value={user.company?.address?.address} />
                   <InfoCard label="City" value={user.company?.address?.city} />
@@ -152,8 +250,7 @@ const UserProfile = () => {
             </div>
           </SectionBox>
 
-          {/* Banking Information */}
-          <SectionBox title="Banking Information" icon={<CreditCard className="w-6 h-6" />} accentColor="amber">
+          <SectionBox title="Banking Information">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <InfoCard label="Card Type" value={user.bank?.cardType} />
               <InfoCard label="Card Number" value={`**** **** **** ${user.bank?.cardNumber?.slice(-4)}`} />
@@ -165,8 +262,7 @@ const UserProfile = () => {
             </div>
           </SectionBox>
 
-          {/* Crypto Wallet */}
-          <SectionBox title="Crypto Wallet" icon={<Coins className="w-6 h-6" />} accentColor="cyan">
+          <SectionBox title="Crypto Wallet">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <InfoCard label="Coin" value={user.crypto?.coin} />
               <InfoCard label="Network" value={user.crypto?.network} />
@@ -176,8 +272,7 @@ const UserProfile = () => {
             </div>
           </SectionBox>
 
-          {/* Additional Information */}
-          <SectionBox title="Additional Information" icon={<GraduationCap className="w-6 h-6" />} accentColor="rose" className="lg:col-span-2">
+          <SectionBox title="Additional Information" className="lg:col-span-2">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <InfoCard label="University" value={user.university} />
               <InfoCard label="Username" value={user.username} />
@@ -197,39 +292,24 @@ const UserProfile = () => {
   )
 }
 
-// Helper Components
-const SectionBox = ({ title, icon, accentColor, children, className = '' }: { title: string; icon: React.ReactNode; accentColor: string; children: React.ReactNode; className?: string }) => {
-  const colorMap: Record<string, string> = {
-    indigo: 'border-indigo-500 text-indigo-400',
-    green: 'border-green-500 text-green-400',
-    purple: 'border-purple-500 text-purple-400',
-    amber: 'border-amber-500 text-amber-400',
-    cyan: 'border-cyan-500 text-cyan-400',
-    rose: 'border-rose-500 text-rose-400',
-  }
-
+const SectionBox = ({ title, children, className = '' }: { title: string; children: React.ReactNode; className?: string }) => {
   return (
-    <div className={`bg-gray-800 rounded-xl border border-gray-700 overflow-hidden hover:border-gray-600 transition-colors ${className}`}>
-      <div className={`border-l-4 ${colorMap[accentColor]} px-6 py-4 border-b border-gray-700`}>
-        <div className="flex items-center gap-3">
-          <div className={colorMap[accentColor]}>{icon}</div>
-          <h2 className="text-xl font-bold text-white">{title}</h2>
-        </div>
+    <div
+      className={`bg-white dark:bg-neutral-800 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300 ease-in-out overflow-hidden ${className}`}
+    >
+      <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">{title}</h2>
       </div>
       <div className="p-6">{children}</div>
+      <div className="h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500" />
     </div>
   )
 }
 
-const InfoCard = ({ icon, label, value, className = '' }: { icon?: React.ReactNode; label: string; value: string | number | undefined; className?: string }) => (
-  <div className="bg-gray-700/50 rounded-lg p-3 hover:bg-gray-700 transition-colors border border-gray-600/50">
-    <div className="flex items-start gap-3">
-      {icon && <div className="mt-1 flex-shrink-0">{icon}</div>}
-      <div className="flex-1 min-w-0">
-        <p className="text-xs font-medium text-gray-400 mb-1">{label}</p>
-        <p className={`text-gray-100 font-medium break-words ${className}`}>{value || 'Not provided'}</p>
-      </div>
-    </div>
+const InfoCard = ({ label, value, className = '' }: { label: string; value: string | number | undefined; className?: string }) => (
+  <div className="bg-gray-50 dark:bg-neutral-700 rounded-lg p-3 border border-gray-200 dark:border-gray-600">
+    <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">{label}</p>
+    <p className={`text-gray-800 dark:text-gray-100 font-medium break-words ${className}`}>{value || 'Not provided'}</p>
   </div>
 )
 

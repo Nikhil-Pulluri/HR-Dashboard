@@ -3,6 +3,8 @@
 import { FC, useMemo } from 'react'
 import Image from 'next/image'
 import { FaStar, FaBookmark, FaEye, FaArrowUp } from 'react-icons/fa'
+import { useRouter } from 'next/navigation'
+import { useBookmarks } from '@/context/useBookmarks'
 
 export type User = {
   id: number
@@ -23,8 +25,9 @@ type Props = {
 
 const UserCard: FC<Props> = ({ user }) => {
   const fullName = `${user.firstName} ${user.lastName}`
-
+  const router = useRouter()
   const rating = useMemo(() => Math.floor(Math.random() * 5) + 1, [])
+  const { bookmarkedUserIds, toggleBookmark } = useBookmarks()
 
   const imageUrl = useMemo(() => {
     const genderPath = user.gender === 'female' ? 'women' : 'men'
@@ -35,7 +38,7 @@ const UserCard: FC<Props> = ({ user }) => {
   return (
     <div className="max-w-sm w-full bg-white rounded-xl shadow-md border border-gray-700 dark:bg-neutral-800 hover:shadow-xl transition-all duration-300 ease-in-out overflow-hidden">
       <div className="p-6 space-y-5">
-        <div className="flex items-center gap-4">
+        <div onClick={() => router.push(`/dashboard/employee/${user.id}`)} className="flex items-center cursor-pointer gap-4">
           <Image src={imageUrl} alt={fullName} width={56} height={56} className="rounded-full border object-cover" />
           <div>
             <h2 className="font-semibold text-lg text-gray-800 dark:text-gray-100">{fullName}</h2>
@@ -63,7 +66,7 @@ const UserCard: FC<Props> = ({ user }) => {
             <FaEye className="hover:text-blue-500 transition" />
           </button>
           <button title="Bookmark">
-            <FaBookmark className="hover:text-yellow-500 transition" />
+            <FaBookmark onClick={() => toggleBookmark(user.id)} className={`hover:text-yellow-500 ${bookmarkedUserIds && bookmarkedUserIds.includes(user.id) ? 'text-yellow-500' : ''} transition`} />
           </button>
           <button title="Promote">
             <FaArrowUp className="hover:text-green-500 transition" />

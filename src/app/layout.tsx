@@ -4,6 +4,7 @@ import { SessionProvider } from 'next-auth/react'
 import { JetBrains_Mono } from 'next/font/google'
 import '@radix-ui/themes/styles.css'
 import { Theme } from '@radix-ui/themes'
+import { BookmarkProvider } from '@/context/useBookmarks'
 
 import './globals.css'
 
@@ -27,7 +28,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${jetBrainsMono.className} dark antialiased`}>
         <SessionProvider>
-          <Theme>{children}</Theme>
+          <BookmarkProvider>
+            <Theme>{children}</Theme>
+          </BookmarkProvider>
         </SessionProvider>
       </body>
     </html>
