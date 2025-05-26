@@ -41,7 +41,7 @@ const UserCard: FC<Props> = ({ user }) => {
     <div className="max-w-sm w-full bg-white rounded-xl shadow-md border border-gray-700 dark:bg-neutral-800 hover:shadow-xl transition-all duration-300 ease-in-out overflow-hidden">
       <div className="p-6 space-y-5">
         <div onClick={() => router.push(`/dashboard/employee/${user.id}`)} className="flex items-center cursor-pointer gap-4">
-          <Image src={imageUrl} alt={fullName} width={56} height={56} className="rounded-full border object-cover" />
+          <img src={imageUrl} alt={fullName} width={56} height={56} className="rounded-full border object-cover" />
           <div>
             <h2 className="font-semibold text-lg text-gray-800 dark:text-gray-100">{fullName}</h2>
             <p className="text-sm text-gray-500 dark:text-gray-400">{user.email}</p>
