@@ -5,6 +5,7 @@ import { JetBrains_Mono } from 'next/font/google'
 import '@radix-ui/themes/styles.css'
 import { Theme } from '@radix-ui/themes'
 import { BookmarkProvider } from '@/context/useBookmarks'
+import { PromotionProvider } from '@/context/usePromotions'
 
 import './globals.css'
 
@@ -29,7 +30,9 @@ export default function RootLayout({
       <body className={`${jetBrainsMono.className} dark antialiased`}>
         <SessionProvider>
           <BookmarkProvider>
-            <Theme>{children}</Theme>
+            <PromotionProvider>
+              <Theme>{children}</Theme>
+            </PromotionProvider>
           </BookmarkProvider>
         </SessionProvider>
       </body>

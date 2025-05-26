@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { FaStar, FaBookmark, FaEye, FaArrowUp } from 'react-icons/fa'
 import { useRouter } from 'next/navigation'
 import { useBookmarks } from '@/context/useBookmarks'
+import { usePromotions } from '@/context/usePromotions'
 
 export type User = {
   id: number
@@ -28,6 +29,7 @@ const UserCard: FC<Props> = ({ user }) => {
   const router = useRouter()
   const rating = useMemo(() => Math.floor(Math.random() * 5) + 1, [])
   const { bookmarkedUserIds, toggleBookmark } = useBookmarks()
+  const { promotedUserIds, togglePromotion } = usePromotions()
 
   const imageUrl = useMemo(() => {
     const genderPath = user.gender === 'female' ? 'women' : 'men'
@@ -69,7 +71,7 @@ const UserCard: FC<Props> = ({ user }) => {
             <FaBookmark onClick={() => toggleBookmark(user.id)} className={`hover:text-yellow-500 ${bookmarkedUserIds && bookmarkedUserIds.includes(user.id) ? 'text-yellow-500' : ''} transition`} />
           </button>
           <button title="Promote">
-            <FaArrowUp className="hover:text-green-500 transition" />
+            <FaArrowUp onClick={() => togglePromotion(user.id)} className={`hover:text-green-500 transition ${promotedUserIds && promotedUserIds.includes(user.id) ? 'text-green-500' : ''}`} />
           </button>
         </div>
       </div>
