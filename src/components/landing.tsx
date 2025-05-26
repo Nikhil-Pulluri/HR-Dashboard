@@ -9,6 +9,10 @@ export default function Landing() {
   const { data: session, status } = useSession()
   const router = useRouter()
 
+  if (session) {
+    console.log('okay')
+  }
+
   useEffect(() => {
     if (status === 'authenticated') {
       router.push('/dashboard')

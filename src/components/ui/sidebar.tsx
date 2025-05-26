@@ -5,11 +5,11 @@ import { AnimatePresence, motion } from 'motion/react'
 import { IconMenu2, IconX } from '@tabler/icons-react'
 import Link from 'next/link'
 
-interface Links {
-  label: string
-  href: string
-  icon: React.JSX.Element | React.ReactNode
-}
+// interface Links {
+//   label: string
+//   href: string
+//   icon: React.JSX.Element | React.ReactNode
+// }
 
 interface SidebarContextProps {
   open: boolean
