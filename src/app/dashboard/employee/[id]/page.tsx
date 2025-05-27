@@ -4,6 +4,8 @@ import { ArrowLeft, Copy, Check } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
 import { FaStar } from 'react-icons/fa'
 // import type { User } from '@/components/card'
+import { useBookmarkPresence } from '@/context/useBookmarkPresence'
+import Tabbed from '@/components/tabbedThings'
 
 export type User = {
   id: number
@@ -83,6 +85,7 @@ const UserProfile = () => {
   const params = useParams()
   const id = params.id
   const router = useRouter()
+  const { isFromBookmark } = useBookmarkPresence()
 
   const rating = useMemo(() => Math.floor(Math.random() * 5) + 1, [])
 
@@ -218,14 +221,27 @@ const UserProfile = () => {
     )
   }
 
+  // const bookmarkCheck = useParams() as { params?: string[] }
+  // const isBookmarks = bookmarkCheck?.params?.includes('bookmarks')
+
   return (
     <div className="min-h-screen bg-gray-50 overflow-auto w-full dark:bg-neutral-800">
       <div className="bg-white dark:bg-neutral-800">
         <div className="max-w-7xl mx-auto px-6 py-4">
-          <button onClick={() => router.push('/dashboard')} className="flex items-center gap-2 text-gray-600 dark:text-gray-300  transition-colors dark:bg-neutral-800  px-4 py-2 rounded-lg border ">
-            <ArrowLeft className="w-9 h-4" />
-            <span>Dashboard</span>
-          </button>
+          {isFromBookmark ? (
+            <button
+              onClick={() => router.push('/dashboard/bookmarks')}
+              className="flex items-center gap-2 text-gray-600 dark:text-gray-300  transition-colors dark:bg-neutral-800  px-4 py-2 rounded-lg border "
+            >
+              <ArrowLeft className="w-9 h-4" />
+              <span>Bookmarks</span>
+            </button>
+          ) : (
+            <button onClick={() => router.push('/dashboard')} className="flex items-center gap-2 text-gray-600 dark:text-gray-300  transition-colors dark:bg-neutral-800  px-4 py-2 rounded-lg border ">
+              <ArrowLeft className="w-9 h-4" />
+              <span>Dashboard</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -283,6 +299,8 @@ const UserProfile = () => {
               <InfoCard label="Hair" value={`${user.hair?.color} ${user.hair?.type}`} />
             </div>
           </SectionBox>
+
+          <Tabbed />
 
           <SectionBox title="Address Information">
             <div className="space-y-4">
